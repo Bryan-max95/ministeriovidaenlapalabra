@@ -1,0 +1,6 @@
+{
+  "name": "Ministerio Vida en la Palabra - RMS",
+  "description": "Sistema web de registro de visitantes y control de visitas para Ministerio Vida en la Palabra.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

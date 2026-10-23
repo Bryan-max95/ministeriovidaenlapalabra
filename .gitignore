@@ -1,0 +1,13 @@
+﻿node_modules/
+.next/
+.next-verify/
+.pnpm-store/
+.vercel/
+coverage/
+.DS_Store
+*.log
+*.tsbuildinfo
+.env*
+!.env.example
+# pnpm-lock.yaml is the deployment lockfile; exclude the stale original Bun lock.
+/bun.lock
