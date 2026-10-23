@@ -19,7 +19,7 @@ Configura los valores para **Production** y, si vas a usarla, **Preview**. No a�
 
 El esquema de Neon ya se inicializó durante la preparación local. Si cambias a otra base, ejecuta `npm run db:setup` desde un entorno de confianza con su conexión privada, o ejecuta `sql/schema.sql` en el editor de Neon. El comando de compilación no reinicia ni modifica la base.
 
-El proyecto valida `SESSION_SECRET` al cargar el servidor; debes definirlo antes de compilar. Las cookies administrativas usan HTTPS en producción. El alojamiento debe poder conectarse al endpoint de Neon.
+El proyecto valida `SESSION_SECRET` cuando necesita firmar o verificar una sesión, sin bloquear la compilación si falta. Es obligatorio configurarlo para que el inicio de sesión funcione. Las cookies administrativas usan HTTPS en producción. El alojamiento debe poder conectarse al endpoint de Neon.
 
 ## Dominio
 
@@ -34,3 +34,9 @@ Los QR y enlaces compartidos ya utilizan el dominio oficial. Hasta que el domini
 Renueva la contraseña de Neon compartida en el chat antes de producción y actualiza la variable privada correspondiente en Vercel.
 
 Documentación oficial: [paquetes y lockfiles](https://vercel.com/docs/package-managers), [Node.js](https://vercel.com/docs/functions/runtimes/node-js/node-js-versions), [variables privadas](https://vercel.com/docs/environment-variables).
+
+## Error: SESSION_SECRET debe tener al menos 32 caracteres
+
+Este error indica que la variable está ausente, vacía o es demasiado corta en el entorno del despliegue. En Settings → Environment Variables crea o corrige SESSION_SECRET, selecciona Production y, si corresponde, Preview, y pega el valor real del archivo privado local .env.vercel, sin las comillas exteriores. No pegues el nombre de la variable ni un valor de ejemplo.
+
+Los archivos .env locales no se publican en GitHub ni se copian automáticamente a Vercel. Después de guardar las variables, crea un nuevo despliegue desde el último commit de main. Los despliegues anteriores no reciben los cambios de variables.

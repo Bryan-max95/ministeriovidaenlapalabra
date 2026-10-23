@@ -23,8 +23,15 @@ import {
   normalizePhoneNumber,
 } from './date-utils';
 
-const TOKEN_SECRET = process.env.SESSION_SECRET;
-if (!TOKEN_SECRET || TOKEN_SECRET.length < 32) throw new Error('Configura SESSION_SECRET con al menos 32 caracteres.');
+// Validate only when authentication needs the key. Next.js imports API modules
+// while collecting build data, before any request is being authenticated.
+function getSessionSecret(): string {
+  const secret = process.env.SESSION_SECRET;
+  if (!secret || secret.trim().length < 32) {
+    throw new Error('Configura SESSION_SECRET con al menos 32 caracteres en las variables privadas del servidor.');
+  }
+  return secret;
+}
 
 export function getRootCredentials(): { username: string; password: string } {
   return {
@@ -54,7 +61,7 @@ export function hashPassword(password: string): string {
 
 function legacyHashPassword(password: string): string {
   return crypto
-    .createHmac('sha256', process.env.LEGACY_PASSWORD_SECRET || TOKEN_SECRET!)
+    .createHmac('sha256', process.env.LEGACY_PASSWORD_SECRET || getSessionSecret())
     .update(password)
     .digest('hex');
 }
@@ -81,7 +88,7 @@ export function createSessionToken(user: SafeUserAccount): string {
   };
   const base64Payload = Buffer.from(JSON.stringify(payload)).toString('base64url');
   const sig = crypto
-    .createHmac('sha256', TOKEN_SECRET!)
+    .createHmac('sha256', getSessionSecret())
     .update(base64Payload)
     .digest('base64url');
   return `${base64Payload}.${sig}`;
@@ -93,7 +100,7 @@ export function verifySessionToken(token?: string | null): SafeUserAccount | nul
   if (parts.length !== 2) return null;
   const [base64Payload, sig] = parts;
   const expectedSig = crypto
-    .createHmac('sha256', TOKEN_SECRET!)
+    .createHmac('sha256', getSessionSecret())
     .update(base64Payload)
     .digest('base64url');
   if (sig !== expectedSig) return null;
